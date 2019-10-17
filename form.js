@@ -2,7 +2,6 @@ import React from 'react';
 
 import {
   View,
-  Alert,
   Text,
   SafeAreaView,
   StyleSheet,
@@ -10,13 +9,12 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import Table from "./table";
+import Table from './table';
 export default class Form extends React.Component {
-  textForm = '';
   constructor(props) {
     super(props);
-
     this.state = {
+      id: new Date().getTime(),
       firstName: '',
       lastName: '',
       email: '',
@@ -32,6 +30,7 @@ export default class Form extends React.Component {
 
   handlePress() {
     let payload = {
+      id: this.state.id,
       firstName: this.state.firstName,
       lastName: this.state.lastName,
       email: this.state.email,
@@ -53,28 +52,49 @@ export default class Form extends React.Component {
         console.log(this.state.empRecord);
       },
     );
+    this.clearTextInput()
   }
 
-  onLogin() {
-    Alert.alert('login', 'successful', [
-      {
-        text: 'OK',
-      },
-      {text: 'Cancel'},
-    ]);
+  remove=(id) =>{
+    temp=this.state.empRecord
+    index = temp.findIndex(index => index.id == id)
+    temp.splice(index,1)
+    this.setState({empRecord:temp})
+   }
+   edit=(id) =>{
+    temp=this.state.empRecord
+    index = temp.findIndex(index => index.id == id)
+    this.setState({
+        firstName:temp[index].firstName,
+        lastName:temp[index].lastName,
+        email:temp[index].email,
+        jobTitle:temp[index].jobTitle,
+         empRecord:temp
+    })
+    temp.splice(index,1)
+   }
+   
+  clearTextInput(){
+    this.setState({
+      firstName:'',
+      lastName:'',
+      email:'',
+      jobTitle:''
+    })
   }
 
   render() {
     return (
       <SafeAreaView>
-        <ScrollView>
-          <View style={styles.viewStyle}>
-            <Text style={styles.textstyle}>First Sample</Text>
-          </View>
+        <View style={styles.viewStyle}>
+          <Text style={styles.textstyle}>First Sample</Text>
+        </View>
+        <View style={styles.container}>
           <View style={styles.viewStyle2}>
             <Text style={styles.nameStyle}>FIRST NAME</Text>
             <TextInput
               style={styles.textInputStyle}
+              value={this.state.firstName}
               onChangeText={text => this.setState({firstName: text})}
               placeholder="Enter first name here"></TextInput>
           </View>
@@ -82,6 +102,7 @@ export default class Form extends React.Component {
             <Text style={styles.nameStyle}>LAST NAME</Text>
             <TextInput
               style={styles.textInputStyle}
+              value={this.state.lastName}
               onChangeText={text => this.setState({lastName: text})}
               placeholder="Enter last name here"></TextInput>
           </View>
@@ -89,19 +110,29 @@ export default class Form extends React.Component {
             <Text style={styles.nameStyle}>E-MAIL</Text>
             <TextInput
               style={styles.textInputStyle}
+              value={this.state.email}
               onChangeText={text => this.setState({email: text})}
               placeholder="Enter e-mail here"></TextInput>
           </View>
-           {/*
+
           <View style={styles.viewStyle2}>
             <Text style={styles.nameStyle}>JOB TITLE</Text>
             <TextInput
               style={styles.textInputStyle}
+              value={this.state.jobTitle}
               onChangeText={text => this.setState({jobTitle: text})}
               placeholder="Enter job title here"></TextInput>
           </View>
-         
-          <View style={styles.viewStyle2}>
+          <TouchableOpacity
+            style={styles.touchableStyle}
+            onPress={() => this.handlePress()}>
+            <View style={styles.buttonStyle}>
+              <Text style={styles.nameStyle}>Submit</Text>
+            </View>
+          </TouchableOpacity>
+          <Table item={this.state.empRecord} remove={this.remove}  edit={this.edit} />
+        </View>
+        {/* <View style={styles.viewStyle2}>
             <Text style={styles.nameStyle}>STREET</Text>
             <TextInput
               style={styles.textInputStyle}
@@ -122,8 +153,8 @@ export default class Form extends React.Component {
               style={styles.textInputStyle}
               onChangeText={text => this.setState({state: text})}
               placeholder="Enter state here"></TextInput>
-          </View>
-          <View style={styles.viewStyle2}>
+          </View> */}
+        {/* <View style={styles.viewStyle2}>
             <Text style={styles.nameStyle}>COUNTRY</Text>
             <TextInput
               style={styles.textInputStyle}
@@ -143,19 +174,7 @@ export default class Form extends React.Component {
             <TextInput
               style={styles.textInputStyle}
               secureTextEntry={true}></TextInput>
-          </View> */}
-          <TouchableOpacity
-            style={styles.touchableStyle}
-            onPress={() => this.handlePress()}>
-            <View style={styles.buttonStyle}>
-              <Text style={styles.nameStyle}>Login</Text>
-            </View>
-          </TouchableOpacity>
-          
-        </ScrollView>
-        <Table
-            item={this.state.empRecord}
-          />
+          </View>  */}
       </SafeAreaView>
     );
   }
@@ -174,10 +193,15 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   viewStyle2: {
-    flexDirection: 'column',
-    paddingTop: 20,
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
+    //justifyContent: 'flex-start',
+    //alignItems: 'flex-start',
+    paddingTop: 10,
+  },
+  container: {
+    //flex: 1,
+    height: '100%',
+    padding: 10,
+    marginBottom: 30,
   },
   viewStyle3: {
     flexDirection: 'row',
