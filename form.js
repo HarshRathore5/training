@@ -7,7 +7,7 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  ScrollView,
+  Alert,
 } from 'react-native';
 import Table from './table';
 export default class Form extends React.Component {
@@ -25,12 +25,24 @@ export default class Form extends React.Component {
       country: '',
       pin: '',
       empRecord: [],
+      buttonState: true,
     };
   }
-
+  checkFields() {
+    if (
+      this.state.firstName != '' &&
+      this.state.lastName != '' &&
+      this.state.email != '' &&
+      this.state.jobTitle != ''
+    ) {
+      this.handlePress();
+    } else {
+      Alert.alert('Fill data in all fields');
+    }
+  }
   handlePress() {
     let payload = {
-      id: this.state.id,
+      id: new Date().getTime(),
       firstName: this.state.firstName,
       lastName: this.state.lastName,
       email: this.state.email,
@@ -42,45 +54,60 @@ export default class Form extends React.Component {
       pin: this.state.pin,
     };
     let empRecord = this.state.empRecord;
-    console.log('empRecord', empRecord);
-    empRecord.push(payload);
-    this.setState(
-      {
-        empRecord: empRecord,
-      },
-      () => {
-        console.log(this.state.empRecord);
-      },
-    );
-    this.clearTextInput()
+    if (this.state.buttonState) {
+      empRecord.push(payload);
+      this.setState(
+        {
+          empRecord: empRecord,
+        },
+        () => {
+          console.log(this.state.empRecord);
+        },
+      );
+    } else {
+      (empRecord[index] = payload),
+        this.setState(
+          {
+            empRecord: empRecord,
+            buttonState: true,
+          },
+          () => {
+            console.log(this.state.empRecord);
+          },
+        );
+    }
+
+    this.clearTextInput();
   }
 
-  remove=(id) =>{
-    temp=this.state.empRecord
-    index = temp.findIndex(index => index.id == id)
-    temp.splice(index,1)
-    this.setState({empRecord:temp})
-   }
-   edit=(id) =>{
-    temp=this.state.empRecord
-    index = temp.findIndex(index => index.id == id)
+  remove = id => {
+    tempToRemove = this.state.empRecord;
+    indexToRemove = tempToRemove.findIndex(a => a.id === id);
+    tempToRemove.splice(indexToRemove, 1);
+    this.setState({empRecord: tempToRemove});
+  };
+  edit = id => {
     this.setState({
-        firstName:temp[index].firstName,
-        lastName:temp[index].lastName,
-        email:temp[index].email,
-        jobTitle:temp[index].jobTitle,
-         empRecord:temp
-    })
-    temp.splice(index,1)
-   }
-   
-  clearTextInput(){
+      buttonState: false,
+    });
+    temp = this.state.empRecord;
+    index = temp.findIndex(index => index.id === id);
     this.setState({
-      firstName:'',
-      lastName:'',
-      email:'',
-      jobTitle:''
-    })
+      firstName: temp[index].firstName,
+      lastName: temp[index].lastName,
+      email: temp[index].email,
+      jobTitle: temp[index].jobTitle,
+      empRecord: temp,
+    });
+  };
+
+  clearTextInput() {
+    this.setState({
+      firstName: '',
+      lastName: '',
+      email: '',
+      jobTitle: '',
+    });
   }
 
   render() {
@@ -124,13 +151,17 @@ export default class Form extends React.Component {
               placeholder="Enter job title here"></TextInput>
           </View>
           <TouchableOpacity
-            style={styles.touchableStyle}
-            onPress={() => this.handlePress()}>
-            <View style={styles.buttonStyle}>
-              <Text style={styles.nameStyle}>Submit</Text>
-            </View>
+            style={styles.buttonStyle}
+            onPress={() => this.checkFields()}>
+            <Text style={styles.nameStyle}>
+              {this.state.buttonState ? 'Submit' : 'Update'}
+            </Text>
           </TouchableOpacity>
-          <Table item={this.state.empRecord} remove={this.remove}  edit={this.edit} />
+          <Table
+            item={this.state.empRecord}
+            remove={this.remove}
+            edit={this.edit}
+          />
         </View>
         {/* <View style={styles.viewStyle2}>
             <Text style={styles.nameStyle}>STREET</Text>
@@ -235,6 +266,7 @@ const styles = StyleSheet.create({
     paddingRight: 20,
   },
   buttonStyle: {
+    marginTop: 20,
     backgroundColor: 'green',
     alignItems: 'center',
     justifyContent: 'center',

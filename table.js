@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, FlatList, StyleSheet, Button} from 'react-native';
+import {View, Text, FlatList, StyleSheet, TouchableOpacity,Button} from 'react-native';
 
 export default class Table extends Component {
   render() {
@@ -41,12 +41,13 @@ export default class Table extends Component {
                 <Text style={styles.textStyle}>{rowData.item.lastName}</Text>
                 <Text style={styles.textStyle}>{rowData.item.email}</Text>
                 <Text style={styles.textStyle}>{rowData.item.jobTitle}</Text>
-                <Button
-                  title="Edit"
-                  onPress={
+                <TouchableOpacity  style={styles.editnDeleteStyle} onPress={
                     () => this.props.edit(rowData.item.id)
-                  }
-                />
+                  }>
+                    <Text style={styles.editndelTextsStyle}>Edit</Text>
+                </TouchableOpacity>
+                
+                
               </View>
               
             </View>
@@ -62,14 +63,30 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     marginTop: 20,
+    borderRadius:10,
+    backgroundColor:'#ffffff',
+    shadowOpacity:1,
+    elevation:5,
+    shadowColor:'lightgray',
+    shadowOffset:{
+      width:0,
+      height:0
+    }
   },
   textStyle: {
+    paddingTop:10,
     fontSize: 15,
     fontWeight: 'bold',
   },
   tableStyle: {
-    //backgroundColor: 'powderblue',
     marginTop: 20,
   },
+  editnDeleteStyle:{
+    
+  },
+  editndelTextsStyle:{
+    fontSize:20,
+    color:'#288FFF'
+  }
   
 });
