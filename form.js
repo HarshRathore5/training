@@ -29,20 +29,23 @@ export default class Form extends React.Component {
     };
   }
   checkFields() {
-    if (
-      this.state.firstName != '' &&
-      this.state.lastName != '' &&
-      this.state.email != '' &&
-      this.state.jobTitle != ''
-    ) {
+    if (!this.validateBtn()) {
       this.handlePress();
-    } else {
-      Alert.alert('Fill data in all fields');
     }
   }
+
+  validateBtn() {
+    var toReturn =
+      this.state.firstName.length == 0 ||
+      this.state.lastName.length == 0 ||
+      this.state.email.length == 0 ||
+      this.state.jobTitle.length == 0;
+    return toReturn;
+  }
+
   handlePress() {
     let payload = {
-      id: new Date().getTime(),
+      id: this.state.buttonState ? new Date().getTime() : idToRemove,
       firstName: this.state.firstName,
       lastName: this.state.lastName,
       email: this.state.email,
@@ -92,6 +95,7 @@ export default class Form extends React.Component {
     });
     temp = this.state.empRecord;
     index = temp.findIndex(index => index.id === id);
+    idToRemove = id;
     this.setState({
       firstName: temp[index].firstName,
       lastName: temp[index].lastName,
@@ -151,7 +155,10 @@ export default class Form extends React.Component {
               placeholder="Enter job title here"></TextInput>
           </View>
           <TouchableOpacity
-            style={styles.buttonStyle}
+            disabled={this.validateBtn()}
+            style={[
+              this.validateBtn() ? styles.buttonDisableStyle : styles.buttonStyle]}
+    
             onPress={() => this.checkFields()}>
             <Text style={styles.nameStyle}>
               {this.state.buttonState ? 'Submit' : 'Update'}
@@ -273,5 +280,18 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     paddingTop: 15,
     paddingBottom: 15,
+    marginLeft: 30,
+    marginRight: 30,
+  },
+  buttonDisableStyle: {
+    marginTop: 20,
+    backgroundColor: 'gray',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 50,
+    paddingTop: 15,
+    paddingBottom: 15,
+    marginLeft: 30,
+    marginRight: 30,
   },
 });
